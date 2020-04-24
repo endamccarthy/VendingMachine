@@ -10,16 +10,15 @@ import java.io.IOException;
  */
 public class VendingMachineSimulation extends Application {
 
-
   public static void main(String[] args) {
     launch();
   }
 
   @Override
   public void start(Stage primaryStage) throws IOException {
-
+    VendingMachine machine = new VendingMachine();
     VendingMachineMenu menu = new CustomerMenu(primaryStage);
-
+    menu.run(machine);
   }
 
 }
