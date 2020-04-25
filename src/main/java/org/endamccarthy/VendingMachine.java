@@ -11,11 +11,25 @@ public class VendingMachine {
 
   public VendingMachine() {
     // read products in from file
-    Product productOne = new Product("Twix", "A1", 0.80);
-    Product productTwo = new Product("Snickers", "A2", 0.85);
+    Product productOne = new Product("Twix", "A1", 0.80, 3);
+    Product productTwo = new Product("Snickers", "A2", 0.85, 4);
+    Product productThree = new Product("Twix", "A3", 3.50, 5);
+    Product productFour = new Product("Snickers", "B1", 0.85, 2);
+    Product productFive = new Product("Twix", "B2", 0.80, 1);
+    Product productSix = new Product("Snickers", "B3", 0.85, 0);
+    Product productSeven = new Product("Twix", "C1", 0.80, 4);
+    Product productEight = new Product("Snickers", "C2", 0.85, 9);
+    Product productNine = new Product("Snickers", "C3", 0.85, 10);
     products = new ArrayList<>();
     products.add(productOne);
     products.add(productTwo);
+    products.add(productThree);
+    products.add(productFour);
+    products.add(productFive);
+    products.add(productSix);
+    products.add(productSeven);
+    products.add(productEight);
+    products.add(productNine);
 
     // read users in from file
     User userOne = new Customer("Enda", "123456", 2.50);
@@ -29,8 +43,8 @@ public class VendingMachine {
     return userInfo.get(username);
   }
 
-  public void getProducts() {
-    System.out.println("TODO....");
+  public ArrayList<Product> getProducts() {
+    return products;
   }
 
 }

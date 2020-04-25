@@ -6,6 +6,7 @@ public abstract class VendingMachineMenu {
 
   protected Stage window;
   protected static User user;
+  protected boolean loggedIn;
 
   public VendingMachineMenu() {
     this(new Stage());
@@ -13,12 +14,9 @@ public abstract class VendingMachineMenu {
 
   public VendingMachineMenu(Stage window) {
     this.window = window;
+    loggedIn = false;
   }
 
   public abstract void run(VendingMachine machine);
-
-  protected void setupScene() {
-
-  }
 
 }

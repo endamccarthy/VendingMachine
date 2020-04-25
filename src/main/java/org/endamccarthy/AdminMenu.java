@@ -61,7 +61,7 @@ public class AdminMenu extends VendingMachineMenu {
   }
 
   private void shutdownMachine() {
-    if (ConfirmMenu.display("Shutdown Machine", "Shutdown the machine?")) {
+    if (ConfirmMenu.display("Shutdown Machine", "Shutdown the machine?", "Yes", "No")) {
       window.close();
     }
   }

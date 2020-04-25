@@ -13,7 +13,7 @@ public class ConfirmMenu {
 
   private static boolean answer;
 
-  public static boolean display(String title, String message) {
+  public static boolean display(String title, String message, String buttonOneText, String buttonTwoText) {
     Stage window = new Stage();
     window.initModality(Modality.APPLICATION_MODAL);
     window.setTitle(title);
@@ -21,8 +21,8 @@ public class ConfirmMenu {
     Label label = new Label();
     label.setText(message);
 
-    Button yesButton = new Button("Yes");
-    Button noButton = new Button("No");
+    Button yesButton = new Button(buttonOneText);
+    Button noButton = new Button(buttonTwoText);
 
     yesButton.setOnAction(e -> {
       answer = true;

@@ -4,17 +4,17 @@ public class Product {
 
   private String description, location;
   private double price;
+  private int quantity;
 
   public Product() {
-    this.description = "";
-    this.location = "";
-    this.price = 0.00;
+    this("", "", 0.00, 0);
   }
 
-  public Product(String description, String location, double price) {
+  public Product(String description, String location, double price, int quantity) {
     setDescription(description);
     setLocation(location);
     setPrice(price);
+    setQuantity(quantity);
   }
 
   public String getDescription() {
@@ -41,5 +41,20 @@ public class Product {
     this.price = price;
   }
 
+  public int getQuantity() {
+    return quantity;
+  }
+
+  public void setQuantity(int quantity) {
+    this.quantity += quantity;
+  }
+
+  public boolean equals(Object other) {
+    if (other == null) {
+      return false;
+    }
+    Product b = (Product) other;
+    return description.equals(b.description) && price == b.price && location.equals(b.location);
+  }
 
 }
