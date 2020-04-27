@@ -1,5 +1,7 @@
 package org.endamccarthy;
 
+import java.text.DecimalFormat;
+
 public class Customer extends User {
 
   private double balance;
@@ -14,10 +16,10 @@ public class Customer extends User {
   }
 
   public double getBalance() {
-    return balance;
+    return (double) Math.round(balance * 100) / 100;
   }
 
   public void setBalance(double balance) {
-    this.balance += balance;
+    this.balance += (double) Math.round(balance * 100) / 100;
   }
 }

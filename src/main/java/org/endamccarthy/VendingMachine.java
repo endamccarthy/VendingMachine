@@ -6,45 +6,91 @@ import java.util.HashMap;
 public class VendingMachine {
 
   final public static int MAX_PRODUCTS = 9;
-  private static ArrayList<Product> products;
-  private static HashMap<String, User> userInfo;
+  final public static String FILENAME_PRODUCTS = "Products.dat";
+  final public static String FILENAME_CLIENTS = "Clients.dat";
+  final public static String FILENAME_ADMIN = "Admin.dat";
+  private HashMap<String, User> userInfo;
+  private ArrayList<Product> products;
+  private ArrayList<String[]> temp;
 
   public VendingMachine() {
-    // read products in from file
-    Product productOne = new Product("Twix", "A1", 0.80, 3);
-    Product productTwo = new Product("Snickers", "A2", 0.85, 4);
-    Product productThree = new Product("Twix", "A3", 3.50, 5);
-    Product productFour = new Product("Snickers", "B1", 0.85, 2);
-    Product productFive = new Product("Twix", "B2", 0.80, 1);
-    Product productSix = new Product("Snickers", "B3", 0.85, 0);
-    Product productSeven = new Product("Twix", "C1", 0.80, 4);
-    Product productEight = new Product("Snickers", "C2", 0.85, 9);
-    Product productNine = new Product("Snickers", "C3", 0.85, 10);
-    products = new ArrayList<>();
-    products.add(productOne);
-    products.add(productTwo);
-    products.add(productThree);
-    products.add(productFour);
-    products.add(productFive);
-    products.add(productSix);
-    products.add(productSeven);
-    products.add(productEight);
-    products.add(productNine);
-
-    // read users in from file
-    User userOne = new Customer("Enda", "123456", 2.50);
-    User userTwo = new Admin("John", "password123");
-    userInfo = new HashMap<>();
-    userInfo.put(userOne.getUsername(), userOne);
-    userInfo.put(userTwo.getUsername(), userTwo);
+    setUserInfo();
+    setProducts();
   }
 
-  public static User getUserInfo(String username) {
+  public User getUserInfo(String username) {
     return userInfo.get(username);
+  }
+
+  private void setUserInfo() {
+    String username, password;
+    double balance;
+    userInfo = new HashMap<>();
+    // read customers first
+    temp = FileInputService.readFromFile(FILENAME_CLIENTS);
+    if (temp != null) {
+      for (String[] line : temp) {
+        if (line.length == 3) {
+          username = line[0].trim();
+          try {
+            balance = Double.parseDouble(line[1].trim());
+          } catch (NumberFormatException e) {
+            continue;
+          }
+          password = line[2].trim();
+          userInfo.put(username, new Customer(username, password, balance));
+        }
+      }
+    } else {
+      System.out.println("File not found");
+    }
+    // read admin second
+    temp = FileInputService.readFromFile(FILENAME_ADMIN);
+    if (temp != null) {
+      for (String[] line : temp) {
+        if (line.length == 2) {
+          username = line[0].trim();
+          password = line[1].trim();
+          userInfo.put(username, new Admin(username, password));
+        }
+      }
+    } else {
+      System.out.println("File not found");
+    }
   }
 
   public ArrayList<Product> getProducts() {
     return products;
+  }
+
+  private void setProducts() {
+    String description, location;
+    double price;
+    int quantity;
+    // read products in from file
+    products = new ArrayList<>();
+    temp = FileInputService.readFromFile(FILENAME_PRODUCTS);
+    if (temp != null && temp.size() <= MAX_PRODUCTS) {
+      for (String[] line : temp) {
+        if (line.length == 4) {
+          description = line[0].trim();
+          location = line[1].trim();
+          try {
+            price = Double.parseDouble(line[2].trim());
+          } catch (NumberFormatException e) {
+            continue;
+          }
+          try {
+            quantity = Integer.parseInt(line[3].trim());
+          } catch (NumberFormatException e) {
+            continue;
+          }
+          products.add(new Product(description, location, price, quantity));
+        }
+      }
+    } else {
+      System.out.println("File not found");
+    }
   }
 
 }

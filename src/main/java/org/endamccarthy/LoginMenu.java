@@ -70,7 +70,7 @@ public class LoginMenu {
   private static boolean validateUser() {
     usernameErrorLabel.setText("");
     passwordErrorLabel.setText("");
-    User tempUser = VendingMachine.getUserInfo(usernameInput.getText());
+    User tempUser = VendingMachineSimulation.machine.getUserInfo(usernameInput.getText());
     if (tempUser != null) {
       if (tempUser.getPassword().equals(passwordInput.getText())) {
         VendingMachineMenu.user = tempUser;

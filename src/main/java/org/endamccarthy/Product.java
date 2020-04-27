@@ -21,7 +21,7 @@ public class Product {
     return description;
   }
 
-  private void setDescription(String description) {
+  public void setDescription(String description) {
     this.description = description;
   }
 
@@ -29,7 +29,7 @@ public class Product {
     return location;
   }
 
-  private void setLocation(String location) {
+  public void setLocation(String location) {
     this.location = location;
   }
 
@@ -37,7 +37,7 @@ public class Product {
     return price;
   }
 
-  private void setPrice(double price) {
+  public void setPrice(double price) {
     this.price = price;
   }
 
