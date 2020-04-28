@@ -9,9 +9,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class Alert {
+public final class AlertBox {
 
-  public static void display(String title, String message, String buttonText) {
+  private AlertBox() {
+    throw new UnsupportedOperationException();
+  }
+
+  public static void displayBox(String title, String message, String buttonText) {
     Stage window = new Stage();
     window.initModality(Modality.APPLICATION_MODAL);
     window.setTitle(title);
@@ -27,9 +31,10 @@ public class Alert {
     confirmLayout.setPadding(new Insets(10));
     confirmLayout.getChildren().addAll(label, button);
     confirmLayout.setAlignment(Pos.CENTER);
-    Scene confirmScene = new Scene(confirmLayout, 250, 250);
+    Scene confirmScene = new Scene(confirmLayout, 350, 250);
     confirmScene.getStylesheets().add("style.css");
     window.setScene(confirmScene);
     window.showAndWait();
   }
+
 }

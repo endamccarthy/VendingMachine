@@ -5,8 +5,8 @@ public abstract class User {
   private String username, password;
 
   public User() {
-    this.username = "";
-    this.password = "";
+    this.username = "defaultUsername";
+    this.password = "defaultPassword";
   }
 
   public User(String username, String password) {

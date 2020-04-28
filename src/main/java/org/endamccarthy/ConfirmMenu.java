@@ -9,11 +9,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class ConfirmMenu {
+public final class ConfirmMenu {
 
   private static boolean answer;
 
-  public static boolean display(String title, String message, String buttonOneText, String buttonTwoText) {
+  private ConfirmMenu() {
+    throw new UnsupportedOperationException();
+  }
+
+  public static boolean displayMenu(String title, String message, String buttonOneText, String buttonTwoText) {
     Stage window = new Stage();
     window.initModality(Modality.APPLICATION_MODAL);
     window.setTitle(title);

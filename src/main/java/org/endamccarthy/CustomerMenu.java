@@ -19,15 +19,12 @@ import javafx.stage.Stage;
 
 public class CustomerMenu extends VendingMachineMenu {
 
-  private Scene sceneOne;
-  private BorderPane borderPane;
-  private HBox topMenu, bottomMenu;
+  private HBox topMenu;
   private GridPane centreMenu;
-  private Button loginButton, logoutButton, buyProductButton;
-  private VendingMachine machine;
+  private Button loginButton;
 
   public CustomerMenu() {
-
+    this(new Stage());
   }
 
   public CustomerMenu(Stage window) {
@@ -38,20 +35,14 @@ public class CustomerMenu extends VendingMachineMenu {
   public void run(VendingMachine machine) {
     this.machine = machine;
     // set up window
-    window.setTitle("Vending Machine");
+    WINDOW.setTitle("Vending Machine");
 
     // set up top menu
     topMenu = new HBox(20);
-    topMenu.setPrefHeight(140);
-    topMenu.setPadding(new Insets(35));
+    topMenu.setPrefHeight(105);
+    topMenu.setPadding(new Insets(20));
     topMenu.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5);");
     topMenu.setAlignment(Pos.TOP_RIGHT);
-
-    // set up bottom menu
-    bottomMenu = new HBox(20);
-    bottomMenu.setPrefHeight(140);
-    bottomMenu.setPadding(new Insets(35));
-    bottomMenu.setStyle("-fx-background-color: rgba(2, 255, 2, 0.5);");
 
     // set up centre menu (grid)
     centreMenu = new GridPane();
@@ -77,40 +68,28 @@ public class CustomerMenu extends VendingMachineMenu {
     logoutButton = new Button("Logout");
 
     // actions
-    loginButton.setOnAction(e -> login());
+    loginButton.setOnAction(e -> {
+      if (login()) {
+        showUserDetails();
+      }
+    });
     logoutButton.setOnAction(e -> logout());
 
     // set up scene
     topMenu.getChildren().addAll(loginButton);
-    borderPane = new BorderPane();
+    BorderPane borderPane = new BorderPane();
     borderPane.setTop(topMenu);
-    borderPane.setBottom(bottomMenu);
     borderPane.setCenter(centreMenu);
-    sceneOne = new Scene(borderPane, 560, 700);
+    Scene sceneOne = new Scene(borderPane, 560, 700);
     sceneOne.getStylesheets().add("style.css");
-    window.setScene(sceneOne);
-    window.show();
+    WINDOW.setScene(sceneOne);
+    WINDOW.show();
   }
 
-  private void login() {
-    // if user logs in...
-    if (LoginMenu.displayMenu("Login")) {
-      // if user is an admin, close customer menu and open admin menu
-      if (user instanceof Admin) {
-        VendingMachineMenu adminMenu = new AdminMenu(window);
-        adminMenu.loggedIn = true;
-        adminMenu.run(machine);
-      } else if (user instanceof Customer) {
-        loggedIn = true;
-        // update customer menu for logged in user
-        showUserDetails();
-      }
-    }
-  }
-
-  private void logout() {
+  @Override
+  protected void logout() {
     loggedIn = false;
-    VendingMachineMenu.user = null;
+    user = null;
     topMenu.getChildren().clear();
     topMenu.getChildren().addAll(loginButton);
   }
@@ -128,10 +107,11 @@ public class CustomerMenu extends VendingMachineMenu {
     centreMenu.getChildren().clear();
     for (int i = 0; i < machine.getProducts().size(); i++) {
       Label productName = new Label(machine.getProducts().get(i).getDescription());
-      Label productPrice = new Label(String.format("€%.2f", machine.getProducts().get(i).getPrice()));
+      Label productPrice = new Label(
+          String.format("€%.2f", machine.getProducts().get(i).getPrice()));
       Label productQuantity = new Label(
           "Quantity left: " + machine.getProducts().get(i).getQuantity());
-      buyProductButton = new Button("Buy");
+      Button buyProductButton = new Button("Buy");
       if (machine.getProducts().get(i).getQuantity() < 1) {
         buyProductButton.setDisable(true);
         buyProductButton.setText("Sold Out");
@@ -160,7 +140,7 @@ public class CustomerMenu extends VendingMachineMenu {
       // if the user does NOT have enough balance...
       if (((Customer) user).getBalance() < productTemp.getPrice()) {
         if (ConfirmMenu
-            .display("Purchase Product", "Sorry, You do not have the required balance", "Logout",
+            .displayMenu("Purchase Product", "Sorry, You do not have the required balance", "Logout",
                 "Try Another Product")) {
           logout();
         }
@@ -171,7 +151,7 @@ public class CustomerMenu extends VendingMachineMenu {
             .format("Product: %s\nPrice: €%.2f\nAre you sure you want to purchase this?",
                 productTemp.getDescription(), productTemp.getPrice());
         // if they confirm the purchase...
-        if (ConfirmMenu.display("Purchase Product", message, "Yes", "No")) {
+        if (ConfirmMenu.displayMenu("Purchase Product", message, "Yes", "No")) {
           // update their balance saved locally (in the vending machine machine memory)
           ((Customer) user).setBalance(-productTemp.getPrice());
           // update the product quantity saved locally
@@ -184,9 +164,13 @@ public class CustomerMenu extends VendingMachineMenu {
           newLine.add(user.getUsername());
           newLine.add("" + ((Customer) user).getBalance());
           newLine.add(user.getPassword());
-          FileOutputService.editSingleLine(VendingMachine.FILENAME_CLIENTS, newLine);
+          if (!FileOutputService.editSingleLine(FILENAME_CLIENTS, newLine)) {
+            AlertBox.displayBox("Warning",
+                "There was a problem writing to client file.\nPlease ensure the correct filename is specified.",
+                "Close");
+          }
           // check if they want to logout or buy another item...
-          if (ConfirmMenu.display("Purchase Product", "Thank you for your purchase", "Logout",
+          if (ConfirmMenu.displayMenu("Purchase Product", "Thank you for your purchase", "Logout",
               "Buy another item")) {
             logout();
           }

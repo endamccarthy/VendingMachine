@@ -57,4 +57,9 @@ public class Product {
     return description.equals(b.description) && price == b.price && location.equals(b.location);
   }
 
+  public String toString() {
+    return "Description: " + getDescription() + ", Location: " + getLocation() + ", Price: "
+        + getPrice() + ", Quantity: " + getQuantity();
+  }
+
 }

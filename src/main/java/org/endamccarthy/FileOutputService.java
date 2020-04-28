@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javax.crypto.spec.PSource;
 
-public class FileOutputService {
+public final class FileOutputService {
 
-  private static Scanner scanner;
+  private FileOutputService() {
+    throw new UnsupportedOperationException();
+  }
 
   // write entire file (rewrites over existing file)
   public static boolean writeToFile(String filename, ArrayList<String> output) {
@@ -38,7 +39,7 @@ public class FileOutputService {
     try {
       BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
       PrintWriter pw = new PrintWriter(bw);
-      scanner = new Scanner(new File(filename));
+      Scanner scanner = new Scanner(new File(filename));
       scanner.useDelimiter("[,\n]");
       while (scanner.hasNext()) {
         username = scanner.next();

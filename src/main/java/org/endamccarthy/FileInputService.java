@@ -5,13 +5,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FileInputService {
+public final class FileInputService {
 
-  private static ArrayList<String[]> input;
+  private FileInputService() {
+    throw new UnsupportedOperationException();
+  }
 
   public static ArrayList<String[]> readFromFile(String filename) {
     try {
-      input = new ArrayList<>();
+      ArrayList<String[]> input = new ArrayList<>();
       BufferedReader br = new BufferedReader(new FileReader(filename));
       String row;
       while ((row = br.readLine()) != null) {

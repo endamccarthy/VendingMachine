@@ -1,7 +1,5 @@
 package org.endamccarthy;
 
-import java.text.DecimalFormat;
-
 public class Customer extends User {
 
   private double balance;

@@ -1,6 +1,5 @@
 package org.endamccarthy;
 
-import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -11,7 +10,7 @@ import java.io.IOException;
  */
 public class VendingMachineSimulation extends Application {
 
-  public static VendingMachine machine;
+  public static VendingMachineMenu customerMenu, adminMenu;
 
   public static void main(String[] args) {
     launch();
@@ -19,18 +18,15 @@ public class VendingMachineSimulation extends Application {
 
   @Override
   public void start(Stage primaryStage) throws IOException {
-
     primaryStage.setOnCloseRequest(e -> {
       e.consume();
-      if (ConfirmMenu.display("Close Application", "Are you sure?", "Yes", "No")) {
+      if (ConfirmMenu.displayMenu("Close Application", "Are you sure?", "Yes", "No")) {
         primaryStage.close();
       }
     });
-
-    machine = new VendingMachine();
-    VendingMachineMenu menu = new CustomerMenu(primaryStage);
-    menu.run(machine);
-
+    VendingMachine machine = new VendingMachine();
+    customerMenu = new CustomerMenu(primaryStage);
+    customerMenu.run(machine);
   }
 
 }
