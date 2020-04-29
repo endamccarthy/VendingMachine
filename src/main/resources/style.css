@@ -1,3 +1,52 @@
 .root {
-  -fx-background-color: #DDDDDD;
+  -fx-background-color: #383838;
+  -fx-font-family: Arial, Helvetica, sans-serif;
+}
+
+.label {
+  -fx-text-fill: #FFFFFF;
+}
+
+.label-form {
+  -fx-font-size: 15;
+}
+
+.label-product-description {
+  -fx-font-size: 20;
+  -fx-font-weight: bold;
+  -fx-text-fill: #3a9445;
+}
+
+.invalid-input {
+  -fx-text-fill: #EB4034;
+}
+
+.popup-background {
+  -fx-background-color: #666363;
+}
+
+.button {
+  -fx-background-radius: 7;
+  -fx-scale-x: 1.04;
+  -fx-scale-y: 1.04;
+  -fx-scale-z: 1.04;
+}
+
+.top-menu {
+  -fx-background-color: #ab4642;
+}
+
+.grid {
+  -fx-background-color: #ab4642;
+  -fx-border-color: white;
+  -fx-padding: 0;
+}
+
+.grid-item {
+  -fx-background-color: white, #ab4642;
+  -fx-background-insets: 0, 0 1 1 0;
+}
+
+.table-view .column-header-background .label{
+    -fx-text-fill: black;
 }

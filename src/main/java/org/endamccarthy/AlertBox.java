@@ -31,6 +31,7 @@ public final class AlertBox {
     confirmLayout.setPadding(new Insets(10));
     confirmLayout.getChildren().addAll(label, button);
     confirmLayout.setAlignment(Pos.CENTER);
+    confirmLayout.getStyleClass().add("popup-background");
     Scene confirmScene = new Scene(confirmLayout, 350, 250);
     confirmScene.getStylesheets().add("style.css");
     window.setScene(confirmScene);

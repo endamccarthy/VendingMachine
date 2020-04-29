@@ -38,10 +38,10 @@ public class CustomerMenu extends VendingMachineMenu {
     WINDOW.setTitle("Vending Machine");
 
     // set up top menu
-    topMenu = new HBox(20);
-    topMenu.setPrefHeight(105);
-    topMenu.setPadding(new Insets(20));
-    topMenu.setStyle("-fx-background-color: rgba(255, 255, 255, 0.5);");
+    topMenu = new HBox(40);
+    topMenu.setPrefHeight(70);
+    topMenu.setPadding(new Insets(20, 20, 0, 20));
+    topMenu.getStyleClass().add("top-menu");
     topMenu.setAlignment(Pos.TOP_RIGHT);
 
     // set up centre menu (grid)
@@ -50,7 +50,7 @@ public class CustomerMenu extends VendingMachineMenu {
     centreMenu.setMinWidth(420);
     centreMenu.setMaxHeight(420);
     centreMenu.setMaxWidth(420);
-    centreMenu.setStyle("-fx-background-color: rgb(200, 170, 200);");
+    centreMenu.getStyleClass().add("grid");
     for (int i = 0; i < 3; i++) {
       ColumnConstraints column = new ColumnConstraints(140);
       column.setHalignment(HPos.CENTER);
@@ -107,19 +107,26 @@ public class CustomerMenu extends VendingMachineMenu {
     centreMenu.getChildren().clear();
     for (int i = 0; i < machine.getProducts().size(); i++) {
       Label productName = new Label(machine.getProducts().get(i).getDescription());
+      productName.getStyleClass().add("label-product-description");
       Label productPrice = new Label(
           String.format("€%.2f", machine.getProducts().get(i).getPrice()));
       Label productQuantity = new Label(
-          "Quantity left: " + machine.getProducts().get(i).getQuantity());
+          "" + machine.getProducts().get(i).getQuantity() + " left");
       Button buyProductButton = new Button("Buy");
       if (machine.getProducts().get(i).getQuantity() < 1) {
         buyProductButton.setDisable(true);
         buyProductButton.setText("Sold Out");
       }
       VBox productLayout = new VBox(10);
+      productLayout.getStyleClass().add("grid-item");
       productLayout.setAlignment(Pos.CENTER);
-      productLayout.getChildren()
-          .addAll(productName, productPrice, productQuantity, buyProductButton);
+      if (machine.getProducts().get(i).getDescription().equals("")) {
+        buyProductButton.setText("No Products");
+        productLayout.getChildren().addAll(buyProductButton);
+      } else {
+        productLayout.getChildren()
+            .addAll(productName, productPrice, productQuantity, buyProductButton);
+      }
       Product productTemp = machine.getProducts().get(i);
       buyProductButton.setOnAction(e -> buyProduct(productTemp));
       if (productTemp.getLocation().matches("[a-cA-C][1-3]")) {
@@ -148,7 +155,7 @@ public class CustomerMenu extends VendingMachineMenu {
       // else if the customer DOES have enough balance...
       else {
         String message = String
-            .format("Product: %s\nPrice: €%.2f\nAre you sure you want to purchase this?",
+            .format("Product: %s\nPrice: €%.2f\n\nAre you sure you want to purchase this?",
                 productTemp.getDescription(), productTemp.getPrice());
         // if they confirm the purchase...
         if (ConfirmMenu.displayMenu("Purchase Product", message, "Yes", "No")) {

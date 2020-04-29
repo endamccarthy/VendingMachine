@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -111,15 +112,20 @@ public abstract class VendingMachineMenu {
     loginLayout.setAlignment(Pos.CENTER_LEFT);
     // set up elements
     Label usernameLabel = new Label("Username: ");
+    usernameLabel.getStyleClass().add("label-form");
     Label usernameErrorLabel = new Label();
+    usernameErrorLabel.getStyleClass().add("invalid-input");
     TextField usernameInput = new TextField();
     usernameInput.setPromptText("Enter Username");
     usernameInput.setMaxWidth(150);
     Label passwordLabel = new Label("Password: ");
+    passwordLabel.getStyleClass().add("label-form");
     Label passwordErrorLabel = new Label();
+    passwordErrorLabel.getStyleClass().add("invalid-input");
     TextField passwordInput = new TextField();
     passwordInput.setPromptText("Enter Password");
     passwordInput.setMaxWidth(150);
+    HBox buttonLayout = new HBox(10);
     Button loginButton = new Button("Login");
     Button cancelButton = new Button("Cancel");
     // actions
@@ -142,10 +148,11 @@ public abstract class VendingMachineMenu {
       window.close();
     });
     // set up scene
+    buttonLayout.getChildren().addAll(loginButton, cancelButton);
     loginLayout.getChildren()
         .addAll(usernameLabel, usernameInput, usernameErrorLabel, passwordLabel, passwordInput,
-            passwordErrorLabel, loginButton,
-            cancelButton);
+            passwordErrorLabel, buttonLayout);
+    loginLayout.getStyleClass().add("popup-background");
     Scene loginScene = new Scene(loginLayout, 300, 300);
     loginScene.getStylesheets().add("style.css");
     window.setScene(loginScene);

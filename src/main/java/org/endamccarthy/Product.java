@@ -50,7 +50,7 @@ public class Product {
   }
 
   public boolean equals(Object other) {
-    if (other == null) {
+    if (!(other instanceof Product)) {
       return false;
     }
     Product b = (Product) other;

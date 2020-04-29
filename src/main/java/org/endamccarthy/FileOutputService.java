@@ -61,10 +61,11 @@ public final class FileOutputService {
       scanner.close();
       pw.flush();
       pw.close();
-      oldFile.delete();
+      if (!oldFile.delete()) {
+        return false;
+      }
       File dump = new File(filename);
-      newFile.renameTo(dump);
-      return true;
+      return newFile.renameTo(dump);
     } catch (IOException e) {
       return false;
     }

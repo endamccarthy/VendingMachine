@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -21,7 +22,7 @@ public final class ConfirmMenu {
     Stage window = new Stage();
     window.initModality(Modality.APPLICATION_MODAL);
     window.setTitle(title);
-    window.setMinWidth(250);
+    window.setMinWidth(300);
     Label label = new Label();
     label.setText(message);
 
@@ -37,11 +38,14 @@ public final class ConfirmMenu {
       window.close();
     });
 
-    VBox confirmLayout = new VBox(10);
-    confirmLayout.setPadding(new Insets(10));
-    confirmLayout.getChildren().addAll(label, yesButton, noButton);
-    confirmLayout.setAlignment(Pos.CENTER);
-    Scene confirmScene = new Scene(confirmLayout, 300, 300);
+    VBox confirmLayout = new VBox(20);
+    confirmLayout.setPadding(new Insets(20));
+    HBox buttonLayout = new HBox(10);
+    buttonLayout.getChildren().addAll(yesButton, noButton);
+    confirmLayout.getChildren().addAll(label, buttonLayout);
+    confirmLayout.setAlignment(Pos.CENTER_LEFT);
+    confirmLayout.getStyleClass().add("popup-background");
+    Scene confirmScene = new Scene(confirmLayout, 350, 250);
     confirmScene.getStylesheets().add("style.css");
     window.setScene(confirmScene);
     window.showAndWait();

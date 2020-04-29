@@ -13,6 +13,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -21,8 +23,9 @@ import javafx.util.Callback;
 public class AdminMenu extends VendingMachineMenu {
 
   private TableView<Product> table;
-  private VBox vbox;
-  private Button shutdownMachineButton, addProductButton;
+  private BorderPane borderPane;
+  private HBox topMenu;
+  private Button addProductButton;
   private Product product;
   private TextField descriptionInput, priceInput, quantityInput;
   private Label descriptionErrorLabel, priceErrorLabel, quantityErrorLabel;
@@ -46,6 +49,7 @@ public class AdminMenu extends VendingMachineMenu {
 
     TableColumn<Product, String> locationColumn = new TableColumn<>("Location");
     locationColumn.setMinWidth(50);
+    locationColumn.getStyleClass().add("-fx-text-fill: blue;");
     locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
 
     TableColumn<Product, String> descriptionColumn = new TableColumn<>("Description");
@@ -60,7 +64,7 @@ public class AdminMenu extends VendingMachineMenu {
     quantityColumn.setMinWidth(50);
     quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
-    TableColumn<Product, Void> restockProductColumn = new TableColumn("Restock");
+    TableColumn<Product, Void> restockProductColumn = new TableColumn<>("Restock");
     Callback<TableColumn<Product, Void>, TableCell<Product, Void>> cellFactory = new Callback<>() {
       @Override
       public TableCell<Product, Void> call(final TableColumn<Product, Void> param) {
@@ -88,7 +92,7 @@ public class AdminMenu extends VendingMachineMenu {
     };
     restockProductColumn.setCellFactory(cellFactory);
 
-    TableColumn removeProductColumn = new TableColumn("Remove Product");
+    TableColumn<Product, Void> removeProductColumn = new TableColumn<>("Remove Product");
     cellFactory = new Callback<>() {
       @Override
       public TableCell<Product, Void> call(final TableColumn<Product, Void> param) {
@@ -119,25 +123,39 @@ public class AdminMenu extends VendingMachineMenu {
     table = new TableView<>();
     ObservableList<Product> products = FXCollections.observableArrayList(machine.getProducts());
     table.setItems(products);
+    //noinspection unchecked
     table.getColumns()
         .addAll(locationColumn, descriptionColumn, priceColumn, quantityColumn,
             restockProductColumn, removeProductColumn);
 
     addProductButton = new Button("Add Product");
     addProductButton.setOnAction(e -> addProduct());
+    addProductButton.setDisable(true);
+    for (Product p : machine.getProducts()) {
+      if (p.getDescription().equals("")) {
+        addProductButton.setDisable(false);
+      }
+    }
 
-    shutdownMachineButton = new Button("Shutdown");
+    Button shutdownMachineButton = new Button("Shutdown");
     shutdownMachineButton.setOnAction(e -> shutdownMachine());
 
     logoutButton = new Button("Logout");
     logoutButton.setOnAction(e -> logout());
 
-    vbox = new VBox(20);
-    vbox.getChildren().addAll(table, addProductButton, shutdownMachineButton, logoutButton);
-    vbox.setPadding(new Insets(10));
-    vbox.setAlignment(Pos.TOP_CENTER);
-    Scene sceneOne = new Scene(vbox, 560, 700);
 
+    // set up top menu
+    topMenu = new HBox(40);
+    topMenu.setPrefHeight(70);
+    topMenu.setPadding(new Insets(20, 20, 0, 20));
+    topMenu.getStyleClass().add("top-menu");
+    topMenu.setAlignment(Pos.TOP_RIGHT);
+    topMenu.getChildren().addAll(addProductButton, shutdownMachineButton, logoutButton);
+    table.setMaxSize(505, 360);
+    borderPane = new BorderPane();
+    borderPane.setTop(topMenu);
+    borderPane.setCenter(table);
+    Scene sceneOne = new Scene(borderPane, 560, 700);
     sceneOne.getStylesheets().add("style.css");
     WINDOW.setScene(sceneOne);
     WINDOW.show();
@@ -249,11 +267,13 @@ public class AdminMenu extends VendingMachineMenu {
       }
     });
     cancelButton.setOnAction(e -> window.close());
+    HBox buttonLayout = new HBox(10);
+    buttonLayout.getChildren().addAll(addProductButton, cancelButton);
     // set up scene
     loginLayout.getChildren()
         .addAll(descriptionLabel, descriptionInput, descriptionErrorLabel, priceLabel, priceInput,
-            priceErrorLabel, quantityLabel, quantityInput, quantityErrorLabel, addProductButton,
-            cancelButton);
+            priceErrorLabel, quantityLabel, quantityInput, quantityErrorLabel, buttonLayout);
+    loginLayout.getStyleClass().add("popup-background");
     Scene loginScene = new Scene(loginLayout, 300, 400);
     loginScene.getStylesheets().add("style.css");
     window.setScene(loginScene);
@@ -291,11 +311,17 @@ public class AdminMenu extends VendingMachineMenu {
   }
 
   private void refreshTable() {
+    addProductButton.setDisable(true);
+    for (Product p : machine.getProducts()) {
+      if (p.getDescription().equals("")) {
+        addProductButton.setDisable(false);
+      }
+    }
     ObservableList<Product> products = FXCollections.observableArrayList(machine.getProducts());
     table.getItems().clear();
     table.setItems(products);
-    vbox.getChildren().clear();
-    vbox.getChildren().addAll(table, addProductButton, shutdownMachineButton, logoutButton);
+    borderPane.setTop(topMenu);
+    borderPane.setCenter(table);
   }
 
 }
