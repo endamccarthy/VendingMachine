@@ -8,14 +8,34 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * FileOutputService
+ * <p>
+ * A Utility class used to write text out to a file.
+ */
 public final class FileOutputService {
 
+  /**
+   * Default Constructor
+   * <p>
+   * As this is a utility class which cannot be instantiated, the constructor is private and throws
+   * an UnsupportedOperationException.
+   */
   private FileOutputService() {
     throw new UnsupportedOperationException();
   }
 
-  // write entire file (rewrites over existing file)
+  /**
+   * writeToFile
+   * <p>
+   * This will overwrite the entire contents of a file with the text passed in here.
+   *
+   * @param filename This is the name of the file that is being attempted to be written to.
+   * @param output   This is an ArrayList of Strings which contains the text to be written.
+   * @return A boolean (true if operation was successful, false otherwise).
+   */
   public static boolean writeToFile(String filename, ArrayList<String> output) {
+    // try to write out to file
     try {
       BufferedWriter bw = new BufferedWriter(new FileWriter(filename));
       PrintWriter pw = new PrintWriter(bw);
@@ -30,12 +50,24 @@ public final class FileOutputService {
     }
   }
 
-  // change a single line in a file
+  /**
+   * editSingleLine
+   * <p>
+   * This will only replace a single line in the file. It is used to update a customers balance. It
+   * copies all the contents of the original file to a temporary file. It checks for the line
+   * containing the username of the customer and replaces the line with a new line including the
+   * updated balance.
+   *
+   * @param filename This is the name of the file that is being attempted to be written to.
+   * @param newLine  This is an ArrayList of Strings which contains the text to be written.
+   * @return A boolean (true if operation was successful, false otherwise).
+   */
   public static boolean editSingleLine(String filename, ArrayList<String> newLine) {
     String username, balance, password;
     String tempFile = "temp.dat";
     File oldFile = new File(filename);
     File newFile = new File(tempFile);
+    // try to write out to file
     try {
       BufferedWriter bw = new BufferedWriter(new FileWriter(tempFile, true));
       PrintWriter pw = new PrintWriter(bw);

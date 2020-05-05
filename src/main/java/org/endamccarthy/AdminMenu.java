@@ -20,6 +20,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+/**
+ * AdminMenu
+ * <p>
+ * A sub-class of VendingMachineMenu used to display an admin menu. An object of this class is
+ * created when an admin attempts to login from the customer menu.
+ */
 public class AdminMenu extends VendingMachineMenu {
 
   private TableView<Product> table;
@@ -33,37 +39,55 @@ public class AdminMenu extends VendingMachineMenu {
   private double price;
   private int quantity;
 
+  /**
+   * Default Constructor.
+   * <p>
+   * Passes a new Stage object to the overloaded constructor.
+   */
   public AdminMenu() {
     this(new Stage());
   }
 
+  /**
+   * Overloaded Constructor
+   * <p>
+   * Passes a Stage object to the overloaded constructor in the super-class.
+   *
+   * @param window This is a Stage object.
+   */
   public AdminMenu(Stage window) {
     super(window);
   }
 
+  /**
+   * run
+   * <p>
+   * Displays the admin menu which includes all products contained in the machine in table form.
+   *
+   * @param machine This is a VendingMachine object.
+   */
   @Override
   public void run(VendingMachine machine) {
     this.machine = machine;
-    // set up window
+    // set window title
     WINDOW.setTitle("Vending Machine | Admin");
-
+    // location column
     TableColumn<Product, String> locationColumn = new TableColumn<>("Location");
     locationColumn.setMinWidth(50);
-    locationColumn.getStyleClass().add("-fx-text-fill: blue;");
     locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
-
+    // description column
     TableColumn<Product, String> descriptionColumn = new TableColumn<>("Description");
     descriptionColumn.setMinWidth(100);
     descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
-
+    // price column
     TableColumn<Product, Double> priceColumn = new TableColumn<>("Price");
     priceColumn.setMinWidth(50);
     priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-
+    // quantity column
     TableColumn<Product, Integer> quantityColumn = new TableColumn<>("Quantity");
     quantityColumn.setMinWidth(50);
     quantityColumn.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-
+    // restock item column
     TableColumn<Product, Void> restockProductColumn = new TableColumn<>("Restock");
     Callback<TableColumn<Product, Void>, TableCell<Product, Void>> cellFactory = new Callback<>() {
       @Override
@@ -91,7 +115,7 @@ public class AdminMenu extends VendingMachineMenu {
       }
     };
     restockProductColumn.setCellFactory(cellFactory);
-
+    // remove item column
     TableColumn<Product, Void> removeProductColumn = new TableColumn<>("Remove Product");
     cellFactory = new Callback<>() {
       @Override
@@ -119,31 +143,32 @@ public class AdminMenu extends VendingMachineMenu {
       }
     };
     removeProductColumn.setCellFactory(cellFactory);
-
-    table = new TableView<>();
+    // convert products from ArrayList to ObservableList
     ObservableList<Product> products = FXCollections.observableArrayList(machine.getProducts());
+    // set up table view to show products
+    table = new TableView<>();
+    table.setMaxSize(505, 360);
     table.setItems(products);
     //noinspection unchecked
     table.getColumns()
         .addAll(locationColumn, descriptionColumn, priceColumn, quantityColumn,
             restockProductColumn, removeProductColumn);
-
+    // set up add product button
     addProductButton = new Button("Add Product");
     addProductButton.setOnAction(e -> addProduct());
     addProductButton.setDisable(true);
+    // only enable add product button if there is space available
     for (Product p : machine.getProducts()) {
       if (p.getDescription().equals("")) {
         addProductButton.setDisable(false);
       }
     }
-
+    // set up shutdown button
     Button shutdownMachineButton = new Button("Shutdown");
     shutdownMachineButton.setOnAction(e -> shutdownMachine());
-
+    // set up logout button
     logoutButton = new Button("Logout");
     logoutButton.setOnAction(e -> logout());
-
-
     // set up top menu
     topMenu = new HBox(40);
     topMenu.setPrefHeight(70);
@@ -151,7 +176,7 @@ public class AdminMenu extends VendingMachineMenu {
     topMenu.getStyleClass().add("top-menu");
     topMenu.setAlignment(Pos.TOP_RIGHT);
     topMenu.getChildren().addAll(addProductButton, shutdownMachineButton, logoutButton);
-    table.setMaxSize(505, 360);
+    // set up overall layout
     borderPane = new BorderPane();
     borderPane.setTop(topMenu);
     borderPane.setCenter(table);
@@ -161,22 +186,33 @@ public class AdminMenu extends VendingMachineMenu {
     WINDOW.show();
   }
 
-  @Override
-  protected void logout() {
+  /**
+   * logout
+   * <p>
+   * Logs the user out and saves the user object as null. Switches back to customer menu.
+   */
+  private void logout() {
     loggedIn = false;
     user = null;
     VendingMachineSimulation.customerMenu.run(machine);
   }
 
+  /**
+   * shutdownMachine
+   * <p>
+   * Writes the latest product list out to the product file.
+   */
   private void shutdownMachine() {
+    // if shutdown is confirmed
     if (ConfirmMenu.displayMenu("Shutdown Machine", "Shutdown the machine?", "Yes", "No")) {
       ArrayList<String> temp;
-      // update products file
+      // update products
       temp = new ArrayList<>();
       for (Product p : machine.getProducts()) {
         temp.add(p.getDescription() + "," + p.getLocation() + "," + p.getPrice() + "," + p
             .getQuantity());
       }
+      // write updated products to file
       if (!FileOutputService.writeToFile(VendingMachine.FILENAME_PRODUCTS, temp)) {
         AlertBox.displayBox("Warning",
             "There was a problem writing to the products file.\nPlease ensure the correct filename is specified.",
@@ -186,19 +222,33 @@ public class AdminMenu extends VendingMachineMenu {
     }
   }
 
+  /**
+   * restockProduct
+   * <p>
+   * Restocks a selected product back to it's maximum stock.
+   *
+   * @param product This is a Product object representing the selected product to restock.
+   */
   private void restockProduct(Product product) {
-    if (product.getQuantity() >= 10) {
+    if (product.getQuantity() >= machine.MAX_STOCK_PER_PRODUCT) {
       AlertBox.displayBox("Restock Item", "This product is already fully stocked", "Close");
     } else if (product.getDescription().equals("")) {
       AlertBox.displayBox("Restock Item", "There is no product in this location", "Close");
     } else {
       machine.getProducts().get(machine.getProducts().indexOf(product))
-          .setQuantity(10 - product.getQuantity());
+          .setQuantity(machine.MAX_STOCK_PER_PRODUCT - product.getQuantity());
       AlertBox.displayBox("Restock Item", "Product is now fully stocked", "Close");
       refreshTable();
     }
   }
 
+  /**
+   * removeProduct
+   * <p>
+   * Removes a selected product from stock.
+   *
+   * @param product This is a Product object representing the selected product to remove.
+   */
   private void removeProduct(Product product) {
     if (product.getDescription().equals("")) {
       AlertBox.displayBox("Remove Product", "There is no product in this location", "Close");
@@ -213,6 +263,11 @@ public class AdminMenu extends VendingMachineMenu {
     }
   }
 
+  /**
+   * addProduct
+   * <p>
+   * Adds a new product to the stock if there is room. Calls on showAddProductMenu for user input.
+   */
   private void addProduct() {
     for (Product p : machine.getProducts()) {
       // if there is room for a new product...
@@ -230,6 +285,14 @@ public class AdminMenu extends VendingMachineMenu {
     }
   }
 
+  /**
+   * showAddProductMenu
+   * <p>
+   * Displays a menu allowing the user to enter new product details. Calls on validateInput to
+   * ensure correct input.
+   *
+   * @return A Product object representing a new product specified by the user.
+   */
   private Product showAddProductMenu() {
     product = null;
     // set up window
@@ -257,9 +320,9 @@ public class AdminMenu extends VendingMachineMenu {
     quantityInput = new TextField();
     quantityInput.setPromptText("Enter Quantity");
     quantityInput.setMaxWidth(150);
+    // set up buttons
     Button addProductButton = new Button("Add Product");
     Button cancelButton = new Button("Cancel");
-    // actions
     addProductButton.setOnAction(e -> {
       product = validateInput();
       if (product != null) {
@@ -281,20 +344,31 @@ public class AdminMenu extends VendingMachineMenu {
     return product;
   }
 
+  /**
+   * validateInput
+   * <p>
+   * Validate the product details inputted by the user.
+   *
+   * @return A Product object representing a new product specified by the user (or null if invalid)
+   */
   private Product validateInput() {
+    // clear any error messages
     descriptionErrorLabel.setText("");
     priceErrorLabel.setText("");
     quantityErrorLabel.setText("");
+    // validate description
     if (descriptionInput.getText().equals("")) {
       descriptionErrorLabel.setText("No Description Provided");
     } else {
       description = descriptionInput.getText();
     }
+    // validate price
     if (!priceInput.getText().matches("\\d{1,2}([.]\\d{0,2})?")) {
       priceErrorLabel.setText("Invalid Price Format");
     } else {
       price = Double.parseDouble(priceInput.getText());
     }
+    // validate quantity
     if (!quantityInput.getText().matches("\\d{1,2}")) {
       quantityErrorLabel.setText("Invalid Quantity Format");
     } else if (Integer.parseInt(quantityInput.getText()) < 1
@@ -303,21 +377,32 @@ public class AdminMenu extends VendingMachineMenu {
     } else {
       quantity = Integer.parseInt(quantityInput.getText());
     }
+    // if there are no error messages, return the product
     if (descriptionErrorLabel.getText().equals("") && priceErrorLabel.getText().equals("")
         && quantityErrorLabel.getText().equals("")) {
       return new Product(description, location, price, quantity);
     }
+    // otherwise return null
     return null;
   }
 
+  /**
+   * refreshTable
+   * <p>
+   * Refresh the product table after any changes are made to it.
+   */
   private void refreshTable() {
+    // reset add product button to be disabled
     addProductButton.setDisable(true);
+    // if there is space available, enable it
     for (Product p : machine.getProducts()) {
       if (p.getDescription().equals("")) {
         addProductButton.setDisable(false);
       }
     }
+    // convert products from ArrayList to ObservableList
     ObservableList<Product> products = FXCollections.observableArrayList(machine.getProducts());
+    // refresh table
     table.getItems().clear();
     table.setItems(products);
     borderPane.setTop(topMenu);

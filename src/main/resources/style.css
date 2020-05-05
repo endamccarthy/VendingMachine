@@ -14,7 +14,7 @@
 .label-product-description {
   -fx-font-size: 20;
   -fx-font-weight: bold;
-  -fx-text-fill: #3a9445;
+  -fx-text-fill: #ab4642;
 }
 
 .invalid-input {
@@ -43,7 +43,7 @@
 }
 
 .grid-item {
-  -fx-background-color: white, #ab4642;
+  -fx-background-color: white, #42ab52;
   -fx-background-insets: 0, 0 1 1 0;
 }
 

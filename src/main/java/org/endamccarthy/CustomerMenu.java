@@ -17,34 +17,60 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+/**
+ * CustomerMenu
+ * <p>
+ * A sub-class of VendingMachineMenu used to display a customer menu. An object of this class is
+ * created by default in VendingMachineSimulation.
+ */
 public class CustomerMenu extends VendingMachineMenu {
 
   private HBox topMenu;
   private GridPane centreMenu;
   private Button loginButton;
 
+  /**
+   * Default Constructor.
+   * <p>
+   * Passes a new Stage object to the overloaded constructor.
+   */
   public CustomerMenu() {
     this(new Stage());
   }
 
+  /**
+   * Overloaded Constructor
+   * <p>
+   * Passes a Stage object to the overloaded constructor in the super-class.
+   *
+   * @param window This is a Stage object.
+   */
   public CustomerMenu(Stage window) {
     super(window);
   }
 
+
+  /**
+   * run
+   * <p>
+   * Displays the customer menu which includes all products contained in the machine.
+   *
+   * @param machine This is a VendingMachine object.
+   */
   @Override
   public void run(VendingMachine machine) {
     this.machine = machine;
-    // set up window
+    // set window title
     WINDOW.setTitle("Vending Machine");
-
-    // set up top menu
+    // set up overall layout
+    BorderPane borderPane = new BorderPane();
+    // set up top section
     topMenu = new HBox(40);
     topMenu.setPrefHeight(70);
     topMenu.setPadding(new Insets(20, 20, 0, 20));
     topMenu.getStyleClass().add("top-menu");
     topMenu.setAlignment(Pos.TOP_RIGHT);
-
-    // set up centre menu (grid)
+    // set up centre section (grid)
     centreMenu = new GridPane();
     centreMenu.setMinHeight(420);
     centreMenu.setMinWidth(420);
@@ -59,25 +85,22 @@ public class CustomerMenu extends VendingMachineMenu {
       row.setValignment(VPos.CENTER);
       centreMenu.getRowConstraints().add(row);
     }
-
     // add products to grid
     showProducts();
-
-    // set up elements
+    // set up top menu buttons
     loginButton = new Button("Login");
     logoutButton = new Button("Logout");
-
-    // actions
+    topMenu.getChildren().addAll(loginButton);
+    // if login button is clicked...
     loginButton.setOnAction(e -> {
+      // if login was successful, show users details
       if (login()) {
         showUserDetails();
       }
     });
+    // if logout button is clicked...
     logoutButton.setOnAction(e -> logout());
-
     // set up scene
-    topMenu.getChildren().addAll(loginButton);
-    BorderPane borderPane = new BorderPane();
     borderPane.setTop(topMenu);
     borderPane.setCenter(centreMenu);
     Scene sceneOne = new Scene(borderPane, 560, 700);
@@ -86,14 +109,23 @@ public class CustomerMenu extends VendingMachineMenu {
     WINDOW.show();
   }
 
-  @Override
-  protected void logout() {
+  /**
+   * logout
+   * <p>
+   * Logs the user out and saves the user object as null. Resets top menu.
+   */
+  private void logout() {
     loggedIn = false;
     user = null;
     topMenu.getChildren().clear();
     topMenu.getChildren().addAll(loginButton);
   }
 
+  /**
+   * showUserDetails
+   * <p>
+   * Displays the users details in the top menu.
+   */
   private void showUserDetails() {
     Label userDetailsLabel = new Label(String
         .format("Hi %s\nYour balance is €%.2f", user.getUsername(),
@@ -103,7 +135,13 @@ public class CustomerMenu extends VendingMachineMenu {
     topMenu.getChildren().addAll(userDetailsLabel, logoutButton);
   }
 
+  /**
+   * showProducts
+   * <p>
+   * Populates the grid pane with each product contained in the machine.
+   */
   private void showProducts() {
+    // clear existing products from menu
     centreMenu.getChildren().clear();
     for (int i = 0; i < machine.getProducts().size(); i++) {
       Label productName = new Label(machine.getProducts().get(i).getDescription());
@@ -113,6 +151,7 @@ public class CustomerMenu extends VendingMachineMenu {
       Label productQuantity = new Label(
           "" + machine.getProducts().get(i).getQuantity() + " left");
       Button buyProductButton = new Button("Buy");
+      // if the product is sold out, disable the button and change it's text
       if (machine.getProducts().get(i).getQuantity() < 1) {
         buyProductButton.setDisable(true);
         buyProductButton.setText("Sold Out");
@@ -120,15 +159,20 @@ public class CustomerMenu extends VendingMachineMenu {
       VBox productLayout = new VBox(10);
       productLayout.getStyleClass().add("grid-item");
       productLayout.setAlignment(Pos.CENTER);
+      // if there is no product at this location, don't show any product info
       if (machine.getProducts().get(i).getDescription().equals("")) {
         buyProductButton.setText("No Products");
         productLayout.getChildren().addAll(buyProductButton);
-      } else {
+      }
+      // else show product info and buy button
+      else {
         productLayout.getChildren()
             .addAll(productName, productPrice, productQuantity, buyProductButton);
       }
       Product productTemp = machine.getProducts().get(i);
+      // if the buy button is clicked
       buyProductButton.setOnAction(e -> buyProduct(productTemp));
+      // show the product in the assigned grid location
       if (productTemp.getLocation().matches("[a-cA-C][1-3]")) {
         int row = Character.toUpperCase(productTemp.getLocation().charAt(0)) - 65;
         int column = Character.getNumericValue(productTemp.getLocation().charAt(1)) - 1;
@@ -137,6 +181,15 @@ public class CustomerMenu extends VendingMachineMenu {
     }
   }
 
+  /**
+   * buyProduct
+   * <p>
+   * Checks if the user is logged in first. Allows the purchase of the product if the user has
+   * enough balance and the product is available. Writes customers updated balance out to customer
+   * file.
+   *
+   * @param productTemp This is a temporary Product object representing the selected product.
+   */
   private void buyProduct(Product productTemp) {
     // show the login menu if user is not logged in
     if (!loggedIn) {
@@ -147,7 +200,8 @@ public class CustomerMenu extends VendingMachineMenu {
       // if the user does NOT have enough balance...
       if (((Customer) user).getBalance() < productTemp.getPrice()) {
         if (ConfirmMenu
-            .displayMenu("Purchase Product", "Sorry, You do not have the required balance", "Logout",
+            .displayMenu("Purchase Product", "Sorry, You do not have the required balance",
+                "Logout",
                 "Try Another Product")) {
           logout();
         }
@@ -182,6 +236,7 @@ public class CustomerMenu extends VendingMachineMenu {
             logout();
           }
         }
+        showUserDetails();
       }
     }
   }
