@@ -11,7 +11,7 @@ Built using:
 
 ## Setup Instructions
 **On Mac**
-- Download zip file (target/VendingMachine.zip) containing executable file.
+- Download zip file ([target/VendingMachine.zip](target/VendingMachine.zip)) containing executable file.
 - Unzip the folder, right click on un-zipped folder and open a new terminal window.
 - Type `sh bin/launch.sh` into the terminal and press enter.
 
