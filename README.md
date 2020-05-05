@@ -14,6 +14,11 @@ Built using:
 - Download zip file ([target/VendingMachine.zip](target/VendingMachine.zip)) containing executable file.
 - Unzip the folder, right click on un-zipped folder and open a new terminal window.
 - Type `sh bin/launch.sh` into the terminal and press enter.
+- If app does not run because of unidentified developer, try this:
+    - Open System preferences...
+    - Security & Privacy
+    - Under General tab, click where it says allow
+    - try running again
 
 **On Windows**
 - Setup a new project in IntelliJ (or similar IDE) using the build attributes listed above.
