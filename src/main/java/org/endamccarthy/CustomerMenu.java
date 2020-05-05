@@ -234,6 +234,7 @@ public class CustomerMenu extends VendingMachineMenu {
           if (ConfirmMenu.displayMenu("Purchase Product", "Thank you for your purchase", "Logout",
               "Buy another item")) {
             logout();
+            return;
           }
         }
         showUserDetails();
