@@ -204,7 +204,9 @@ public class CustomerMenu extends VendingMachineMenu {
                 "Logout",
                 "Try Another Product")) {
           logout();
+          return;
         }
+        showUserDetails();
       }
       // else if the customer DOES have enough balance...
       else {

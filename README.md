@@ -1,7 +1,8 @@
 # Vending Machine
-College Project
 
-May 2020
+College Project, May 2020
+
+Github: https://github.com/endamccarthy/VendingMachine
 
 Built using:
 - **Java** - Version 13
