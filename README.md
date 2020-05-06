@@ -11,7 +11,7 @@ Built using:
 - **IntelliJ IDEA** - 2020.1.1 (Community Edition)
 
 ## Setup Instructions
-**On Mac**
+**On Mac (recommended)**
 - Download zip file ([target/VendingMachine.zip](target/VendingMachine.zip)) containing an executable file.
 - Right click on downloaded (and un-zipped) folder and open a new terminal window.
 - Type `sh bin/launch.sh` into the terminal and press enter.
